@@ -1,0 +1,71 @@
+{% extends 'base.html' %} {% block content %}
+<div class="container mt-4 ml-0">
+  {% include 'partials/_messages.html' %}
+  <div class="row">
+    <div class="col-md-10">
+      <nav aria-label="breadcrumb">
+        <ol class="breadcrumb">
+          <li class="breadcrumb-item">
+            <a href="#">Business</a>
+          </li>
+        </ol>
+      </nav>
+    </div>
+
+    <div class="col-md-2">
+      <a href="{% url 'add-business' %}" class="btn btn-primary"
+        >Add Business</a
+      >
+    </div>
+  </div>
+
+  <div class="container">
+    <table class="table table-stripped table-hover">
+      <thead>
+        {% comment %} Columns{% endcomment %}
+        <tr>
+          <th>My Businesses</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for business in businesses %}
+        <tr>
+          <td>
+            <a href={% url "business-detail" business.pk%} style="text-decoration: none"
+              >{{business}}
+              <svg
+                class="hidden"
+                xmlns="http://www.w3.org/2000/svg"
+                width="32"
+                height="32"
+                viewBox="0 0 32 32"
+                id="right-arrow"
+                style="float: right; width: 25px; height: 25px"
+              >
+                <path
+                  d="M23.706 15.312l-5.918-6.69a1.007 1.007 0 0 0-1.422 1.422l5.3 5.992-5.3 5.992a1.007 1.007 0 0 0 1.422 1.422l5.918-6.69c.2-.2.296-.462.292-.724a1.004 1.004 0 0 0-.292-.724zm-14.514 8.14c.392.392 1.03.392 1.422 0l5.918-6.69c.2-.2.296-.462.292-.724a.993.993 0 0 0-.292-.724l-5.916-6.692a1.007 1.007 0 0 0-1.422 1.422l5.3 5.992-5.3 5.992a1.007 1.007 0 0 0-.002 1.424z"
+                ></path>
+              </svg>
+            </a>
+          </td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+<style>
+  td a {
+    display: block;
+    padding: 16px;
+    color: unset;
+  }
+  .hidden {
+    opacity: 0;
+  }
+  td:hover .hidden {
+    opacity: 1;
+  }
+</style>
+
+{% endblock content %}

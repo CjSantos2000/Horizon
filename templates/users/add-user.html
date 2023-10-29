@@ -1,0 +1,82 @@
+{% extends 'base.html' %} {% load static %} {% block content %}
+<div class="container mt-4 ml-0">
+  {% include 'partials/_messages.html' %}
+  <nav aria-label="breadcrumb">
+    <ol class="breadcrumb">
+      <li class="breadcrumb-item">
+        <a href="{% url 'users' %}">Users</a>
+      </li>
+      <li class="breadcrumb-item active" aria-current="p age">Add Users</li>
+    </ol>
+  </nav>
+
+  <div class="card">
+    <div class="card-body">
+      <form action="{% url 'add-user' %}" method="post">
+        {% csrf_token %}
+        <div class="form-group">
+          <label for="">First Name</label>
+          <input
+            type="text"
+            class="form-control form-control-sm"
+            value="{{fieldValues.first_name}}"
+            name="first_name"
+          />
+        </div>
+
+        <div class="form-group">
+          <label for="">Last Name</label>
+          <input
+            type="text"
+            class="form-control form-control-sm"
+            value="{{fieldValues.last_name}}"
+            name="last_name"
+          />
+        </div>
+
+        <div class="form-group">
+          <label for="">Username</label>
+          <input
+            type="text"
+            name="username"
+            id="usernameField"
+            value="{{fieldValues.username}}"
+            class="form-control form-control-sm"
+          />
+        </div>
+
+        <div class="form-group">
+          <label for="">Email</label>
+          <input
+            type="email"
+            name="email"
+            class="form-control form-control-sm"
+            id="emailField"
+            value="{{fieldValues.email}}"
+          />
+        </div>
+
+        <div class="form-group">
+          <label for="">Password</label>
+          <input
+            type="password"
+            name="password"
+            placeholder="Password"
+            class="form-control form-control-sm"
+            id="passwordField"
+          />
+          <small class="float-right py-3 showPasswordToggle">SHOW</small>
+        </div>
+
+        <input
+          type="submit"
+          value="Add"
+          class="btn btn-primary btn-primary-sm mt-2"
+        />
+      </form>
+    </div>
+  </div>
+</div>
+<script src="{% static 'js/register.js' %}"></script>
+
+{% endblock %}

@@ -1,0 +1,54 @@
+{% extends 'base.html' %} {% block content %}
+<div class="container mt-4 ml-0">
+  {% include 'partials/_messages.html' %}
+  <div class="row">
+    <div class="col-md-10">
+      <nav aria-label="breadcrumb">
+        <ol class="breadcrumb">
+          <li class="breadcrumb-item">
+            <a href="#">Users</a>
+          </li>
+          {% comment %}
+          <li class="breadcrumb-item active" aria-current="page">My Users</li>
+          {% endcomment %}
+        </ol>
+      </nav>
+    </div>
+
+    <div class="col-md-2">
+      <a href="{% url 'add-user' %}" class="btn btn-primary">Add User</a>
+    </div>
+  </div>
+
+  <div class="container">
+    <table class="table table-stripped table-hover">
+      <thead>
+        {% comment %} Columns{% endcomment %}
+        <tr>
+          <th>Full Name</th>
+          <th>Type</th>
+          <th></th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for user in users %}
+        <tr>
+          <a href="#" style="text-decoration: none">
+            <td>{{user.get_full_name}}</td>
+            <td>{% if user.is_superuser%} ADMIN {% else %} User {% endif %}</td>
+          </a>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+<style>
+  td a {
+    display: block;
+    padding: 16px;
+    color: unset;
+  }
+</style>
+
+{% endblock content %}

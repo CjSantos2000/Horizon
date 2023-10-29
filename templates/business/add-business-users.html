@@ -1,0 +1,72 @@
+{% extends 'base.html' %} {% block content %}
+<div class="container mt-4 ml-0">
+  {% include 'partials/_messages.html' %}
+  <nav aria-label="breadcrumb">
+    <ol class="breadcrumb">
+      <li class="breadcrumb-item">
+        <a href="{% url 'business' %}">Business</a>
+      </li>
+      <li class="breadcrumb-item" aria-current="p age">
+        <a href="{% url 'add-business' %}">Add Business</a>
+      </li>
+      <li class="breadcrumb-item active">Add Business Owners</li>
+    </ol>
+  </nav>
+  <div class="card">
+    <div class="card-body">
+      <h2>Add {{ business_name }} Owners</h2>
+      <form action="{% url 'add-business-users' %}" method="post">
+        {% csrf_token %} {% for i in number_of_users %}
+        <div class="form-row align-items-center mb-3">
+          <div class="col-auto">
+            <label for="">User {{i}}</label>
+            <select
+              name="user{{i}}-id"
+              id=""
+              class="form-control custom-select ml-3"
+              style="width: 250px"
+              required
+            >
+              <option value="">Select User</option>
+              {% for user in users %}
+              <option value="{{user.id}}">{{user.id}}</option>
+              {% endfor %}
+            </select>
+          </div>
+          <label for="" class="ml-5">Amount</label>
+          <div class="col-auto">
+            <input
+              type="text"
+              name="user{{i}}-amount"
+              id=""
+              class="form-control form-control-sm ml-2"
+              style="width: 250px"
+              required
+            />
+          </div>
+        </div>
+
+        {% endfor %}
+        <input type="hidden" name="business-name" value="{{ business_name }}" />
+        <input type="hidden" name="business-status" value="{{ status }}" />
+        <input
+          type="submit"
+          value="Add"
+          class="btn btn-primary btn-primary-sm mt-4"
+        />
+      </form>
+    </div>
+  </div>
+</div>
+<style>
+  td a {
+    display: block;
+    padding: 16px;
+    color: unset;
+  }
+</style>
+<script>
+  document.getElementById("nameofid").value = "My value";
+</script>
+
+{% endblock content %}
