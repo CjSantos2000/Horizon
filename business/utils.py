@@ -5,7 +5,9 @@ def format_chart_data(queryset: QuerySet):
     data_dict = {"labels": [], "data": []}
     for entry in queryset:
         data_dict["labels"].append(entry["date"])
-        data_dict["data"].append(float(entry["total_amount"]))
+        data_dict["data"].append(
+            float(entry["income_total_amount"] - float(entry["expense_total_amount"]))
+        )
     return data_dict
 
 

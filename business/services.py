@@ -5,7 +5,8 @@ from django.contrib.auth.models import User
 from django.contrib.auth.password_validation import validate_password
 from django.core.files import File
 from django.db import transaction
-from django.db.models import F, Sum
+from django.db.models import F, Sum, Case, When, Value
+from django.db.models.fields import FloatField
 from typing import List, Dict, Any
 from authentication.selectors import get_user_by_username
 from HorizonApp import errors
@@ -172,46 +173,55 @@ def get_business_chart_data(*, business: Business, period: str):
     @out (Dict[str, Any]): The business chart data.
 
     """
-
+    # TODO - Add validation for period, business
+    # TODO - Fix Total Amount (SUM FOR ALL INCOME AND MINUS EXPENSES) JOIN TABLES
     # Get the current date
     current_date = datetime.now()
     queryset = None
+    date = F("created_at__date")
 
     if period == "daily":
         # Calculate the start and end dates for this week, this month, and this year
         start_of_week = current_date - timedelta(days=current_date.weekday())
         end_of_week = start_of_week + timedelta(days=6)
-        queryset = (
-            TransactionLog.objects.filter(
-                business=business, created_at__date__range=[start_of_week, end_of_week]
-            )
-            .values(date=F("created_at__date"))
-            .annotate(total_amount=Sum("amount"))
+        queryset = TransactionLog.objects.filter(
+            business=business, created_at__date__range=[start_of_week, end_of_week]
         )
-
+    # TODO - Fix weekly
     elif period == "weekly":
         start_of_month = current_date.replace(day=1)
         end_of_month = start_of_month.replace(
             day=calendar.monthrange(current_date.year, current_date.month)[1]
         )
-        queryset = (
-            TransactionLog.objects.filter(
-                business=business,
-                created_at__date__range=[start_of_month, end_of_month],
-            )
-            .values(date=F("created_at__date"))
-            .annotate(total_amount=Sum("amount"))
+        queryset = TransactionLog.objects.filter(
+            business=business,
+            created_at__date__range=[start_of_month, end_of_month],
         )
 
     elif period == "monthly":
         start_of_year = current_date.replace(month=1, day=1)
-        queryset = (
-            TransactionLog.objects.filter(
-                business=business, created_at__date__range=[start_of_year, current_date]
-            )
-            .values(date=F("created_at__date__month"))
-            .annotate(total_amount=Sum("amount"))
+        date = F("created_at__date__month")
+        queryset = TransactionLog.objects.filter(
+            business=business, created_at__date__range=[start_of_year, current_date]
         )
+        # breakpoint()
+
+    queryset = queryset.values(date=date).annotate(
+        income_total_amount=Sum(
+            Case(
+                When(type=TransactionLog.TransactionType.INCOME, then=F("amount")),
+                default=Value(0),
+                output_field=FloatField(),
+            )
+        ),
+        expense_total_amount=Sum(
+            Case(
+                When(type=TransactionLog.TransactionType.EXPENSE, then=F("amount")),
+                default=Value(0),
+                output_field=FloatField(),
+            )
+        ),
+    )
 
     data = format_chart_data(queryset=queryset)
 
@@ -220,6 +230,7 @@ def get_business_chart_data(*, business: Business, period: str):
             "labels": [f"Week {week_of_month(label)}" for label in data["labels"]],
             "data": data["data"],
         }
+        print(data)
     elif period == "monthly":
         data = {
             "labels": [calendar.month_name[label] for label in data["labels"]],
