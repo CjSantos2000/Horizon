@@ -30,7 +30,7 @@ DEBUG = True
 
 # Deployement settings on railway.app
 ALLOWED_HOSTS = ["*", "horizon-production.up.railway.app"]
-CSRF_TRUSTED_ORIGINS = ["*"]
+# CSRF_TRUSTED_ORIGINS = ["*"]
 
 
 # Application definition
