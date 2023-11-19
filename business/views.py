@@ -108,9 +108,7 @@ class BusinessDetailView(View):
     def get(self, request, pk, *args, **kwargs):
         limit = 5
         business = models.Business.objects.get(pk=pk)
-        transaction_logs = models.TransactionLog.objects.filter(business=business)[
-            0:limit
-        ]
+        transaction_logs = models.TransactionLog.objects.filter(business=business)
         return render(
             request,
             "business/business-detail.html",
@@ -192,7 +190,9 @@ class BusinessChartDataView(View):
     def get(self, request, pk, *args, **kwargs):
         period = request.GET.get("period")
         business = models.Business.objects.get(pk=pk)
+        income_data, expense_data = services.get_business_chart_data(
+            business=business, period=period
+        )
 
-        data = services.get_business_chart_data(business=business, period=period)
-
+        data = {"income": income_data, "expense": expense_data}
         return JsonResponse(data, status=200)
