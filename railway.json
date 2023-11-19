@@ -4,7 +4,7 @@
         "builder": "NIXPACKS"
     },
     "deploy": {
-        "startCommand": "pip install --upgrade pip python manage.py migrate && python manage.py collectstatic --noinput && gunicorn HorizonApp.wsgi",
+        "startCommand": "python manage.py migrate && python manage.py collectstatic --noinput && gunicorn HorizonApp.wsgi",
         "restartPolicyType": "ON_FAILURE",
         "restartPolicyMaxRetries": 10
     }
