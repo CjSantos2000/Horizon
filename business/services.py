@@ -77,7 +77,6 @@ def create_user_business_contribution(
     @params user (User): The user.
     """
     amount = business.data.get(f"{user.id}")
-    print(amount)
     percentage = (int(business.data.get(f"{user.id}")) / business.total_amount) * 100
 
     return BusinessContribution.objects.create(
@@ -180,7 +179,6 @@ def get_business_chart_data(*, business: Business, period: str):
         description="Initial Investment"
     )
     date = F("custom_created_at_date")
-    print(current_date.weekday())
 
     if period == "all":
         # Calculate the start and end dates for this week, this month, and this year
@@ -224,21 +222,11 @@ def get_business_chart_data(*, business: Business, period: str):
             )
         ),
     )
-    # print(queryset)
 
     income, expense = format_chart_data(queryset=queryset)
 
     income_data = income
     expense_data = expense
-
-    data = {
-        "income": income_data,
-        "expense": expense_data,
-    }
-
-    print("-" * 100)
-    # print(data)
-    print("-" * 100)
 
     if period == "monthly":
         compressed_income_data = compress_monthly_data(income_data)
@@ -269,13 +257,5 @@ def get_business_chart_data(*, business: Business, period: str):
             "labels": [calendar.month_name[label] for label in expense["labels"]],
             "data": expense["data"],
         }
-
-    data = {
-        "income": income_data,
-        "expense": expense_data,
-    }
-    print("-" * 100)
-    # print(data)
-    print("-" * 100)
 
     return income_data, expense_data

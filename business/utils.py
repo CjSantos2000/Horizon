@@ -32,7 +32,5 @@ def week_of_month(date):
 def compress_monthly_data(data):
     combined_data = defaultdict(float)
     for label, amount in zip(data["labels"], data["data"]):
-        # print(week_of_month(label))
         combined_data[week_of_month(label)] += amount
-    # print(dict(combined_data))
     return dict(combined_data)
