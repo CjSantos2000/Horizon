@@ -1,5 +1,4 @@
-{% extends 'base.html' %} {% block content %}
-{% load static %}
+{% extends 'base.html' %} {% block content %} {% load static %}
 <div class="container mt-4 ml-0">
   {% include 'partials/_messages.html' %}
   <div class="row mt-3">
@@ -58,14 +57,17 @@
   <div class="container-chart mt-5">
     <canvas id="myChart" width="100" height="50"></canvas>
     <div class="btn-group mt-2" role="group">
-      <button type="button" class="btn btn-secondary ml-2" id="dailyButton">
-        Daily
+      <button type="button" class="btn btn-secondary ml-2" id="allButton">
+        All
       </button>
       <button type="button" class="btn btn-secondary ml-2" id="weeklyButton">
         Weekly
       </button>
       <button type="button" class="btn btn-secondary ml-2" id="monthlyButton">
         Monthly
+      </button>
+      <button type="button" class="btn btn-secondary ml-2" id="yearlyButton">
+        Yearly
       </button>
     </div>
   </div>
@@ -88,7 +90,7 @@
           <td>{{transaction.description}}</td>
           <td>{{transaction.type}}</td>
           <td>{{transaction.amount}}</td>
-          <td>{{transaction.created_at}}</td>
+          <td>{{transaction.custom_created_at_date}}</td>
         </tr>
         {% endfor %}
       </tbody>
@@ -117,6 +119,5 @@
 </style>
 
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-
 <script src="{% static "js/business-chart.js" %}"></script>
 {% endblock content %}

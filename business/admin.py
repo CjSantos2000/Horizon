@@ -13,7 +13,14 @@ class BusinessContributionAdmin(admin.ModelAdmin):
 
 
 class TransactionLogAdmin(admin.ModelAdmin):
-    list_display = ("transaction_id", "description", "type", "amount", "business")
+    list_display = (
+        "transaction_id",
+        "description",
+        "type",
+        "amount",
+        "business",
+        "custom_created_at_date",
+    )
 
 
 class TransactionFileAdmin(admin.ModelAdmin):

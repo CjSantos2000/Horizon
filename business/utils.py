@@ -1,14 +1,18 @@
 from django.db.models import QuerySet
+from collections import defaultdict
 
 
 def format_chart_data(queryset: QuerySet):
-    data_dict = {"labels": [], "data": []}
+    data_dict_income = {"labels": [], "data": []}
+    data_dict_expense = {"labels": [], "data": []}
     for entry in queryset:
-        data_dict["labels"].append(entry["date"])
-        data_dict["data"].append(
-            float(entry["income_total_amount"] - float(entry["expense_total_amount"]))
-        )
-    return data_dict
+        data_dict_income["labels"].append(entry["date"])
+        data_dict_income["data"].append(float(entry["income_total_amount"]))
+
+        data_dict_expense["labels"].append(entry["date"])
+        data_dict_expense["data"].append(float(entry["expense_total_amount"]))
+
+    return data_dict_income, data_dict_expense
 
 
 from math import ceil
@@ -23,3 +27,12 @@ def week_of_month(date):
     adjusted_dom = dom + (1 + first_day.weekday()) % 7
 
     return int(ceil(adjusted_dom / 7.0))
+
+
+def compress_monthly_data(data):
+    combined_data = defaultdict(float)
+    for label, amount in zip(data["labels"], data["data"]):
+        # print(week_of_month(label))
+        combined_data[week_of_month(label)] += amount
+    # print(dict(combined_data))
+    return dict(combined_data)

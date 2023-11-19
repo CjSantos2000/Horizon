@@ -41,6 +41,7 @@ class TransactionLog(BaseModel):
     business = models.ForeignKey(Business, on_delete=models.CASCADE)
     amount = models.DecimalField(max_digits=10, decimal_places=2, default=0.00)
     created_by = models.ForeignKey(User, on_delete=models.CASCADE)
+    custom_created_at_date = models.DateField(null=True, blank=True)
 
     class Meta:
         ordering = ["-created_at"]

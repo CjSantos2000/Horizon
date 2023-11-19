@@ -11,7 +11,7 @@ from typing import List, Dict, Any
 from authentication.selectors import get_user_by_username
 from HorizonApp import errors
 from .models import Business, BusinessContribution, TransactionLog, TransactionFile
-from .utils import format_chart_data, week_of_month
+from .utils import format_chart_data, week_of_month, compress_monthly_data
 
 
 def create_business_as_admin(
@@ -96,6 +96,7 @@ def create_transaction_logs_as_admin(
     amount: Decimal,
     created_by: User,
     images: List[any],
+    custom_created_at_date: date,
 ) -> TransactionLog:
     """
     This function receives a request data and creates a transaction log as admin.
@@ -117,6 +118,7 @@ def create_transaction_logs_as_admin(
                 amount=Decimal(amount),
                 description=description,
                 created_by=created_by,
+                custom_created_at_date=custom_created_at_date,
             )
 
             if transaction_obj:
@@ -133,7 +135,6 @@ def create_transaction_logs_as_admin(
                         file_name=file_name,
                         file_type=file_type,
                     )
-
                     transaction_file.file.save(file_name, File(image))
 
     except Exception as e:
@@ -173,38 +174,39 @@ def get_business_chart_data(*, business: Business, period: str):
     @out (Dict[str, Any]): The business chart data.
 
     """
-    # TODO - Add validation for period, business
-    # TODO - Fix Total Amount (SUM FOR ALL INCOME AND MINUS EXPENSES) JOIN TABLES
     # Get the current date
     current_date = datetime.now()
-    queryset = None
-    date = F("created_at__date")
+    queryset = TransactionLog.objects.filter(business=business).exclude(
+        description="Initial Investment"
+    )
+    date = F("custom_created_at_date")
+    print(current_date.weekday())
 
-    if period == "daily":
+    if period == "all":
         # Calculate the start and end dates for this week, this month, and this year
-        start_of_week = current_date - timedelta(days=current_date.weekday())
-        end_of_week = start_of_week + timedelta(days=6)
-        queryset = TransactionLog.objects.filter(
-            business=business, created_at__date__range=[start_of_week, end_of_week]
-        )
-    # TODO - Fix weekly
+        queryset = queryset
     elif period == "weekly":
+        # Calculate the start and end dates for this week, this month, and this year
+        start_of_week = current_date - timedelta(days=current_date.weekday() + 1)
+        end_of_week = start_of_week + timedelta(days=6)
+        queryset = queryset.filter(
+            custom_created_at_date__range=[start_of_week, end_of_week],
+        )
+    elif period == "monthly":
         start_of_month = current_date.replace(day=1)
         end_of_month = start_of_month.replace(
             day=calendar.monthrange(current_date.year, current_date.month)[1]
         )
-        queryset = TransactionLog.objects.filter(
-            business=business,
-            created_at__date__range=[start_of_month, end_of_month],
-        )
 
-    elif period == "monthly":
-        start_of_year = current_date.replace(month=1, day=1)
-        date = F("created_at__date__month")
-        queryset = TransactionLog.objects.filter(
-            business=business, created_at__date__range=[start_of_year, current_date]
+        queryset = queryset.filter(
+            custom_created_at_date__range=[start_of_month, end_of_month],
         )
-        # breakpoint()
+    elif period == "yearly":
+        start_of_year = current_date.replace(month=1, day=1)
+        date = F("custom_created_at_date__month")
+        queryset = queryset.filter(
+            custom_created_at_date__range=[start_of_year, current_date],
+        )
 
     queryset = queryset.values(date=date).annotate(
         income_total_amount=Sum(
@@ -222,19 +224,58 @@ def get_business_chart_data(*, business: Business, period: str):
             )
         ),
     )
+    # print(queryset)
 
-    data = format_chart_data(queryset=queryset)
+    income, expense = format_chart_data(queryset=queryset)
 
-    if period == "weekly":
-        data = {
-            "labels": [f"Week {week_of_month(label)}" for label in data["labels"]],
-            "data": data["data"],
+    income_data = income
+    expense_data = expense
+
+    data = {
+        "income": income_data,
+        "expense": expense_data,
+    }
+
+    print("-" * 100)
+    # print(data)
+    print("-" * 100)
+
+    if period == "monthly":
+        compressed_income_data = compress_monthly_data(income_data)
+        compressed_expense_data = compress_monthly_data(expense_data)
+        income_result = {
+            "labels": [key for key in compressed_income_data.keys()],
+            "data": [value for value in compressed_income_data.values()],
         }
-        print(data)
-    elif period == "monthly":
-        data = {
-            "labels": [calendar.month_name[label] for label in data["labels"]],
-            "data": data["data"],
+        expense_result = {
+            "labels": [key for key in compressed_expense_data.keys()],
+            "data": [value for value in compressed_expense_data.values()],
         }
 
-    return data
+        income_data = {
+            "labels": [f"Week {label}" for label in income_result["labels"]],
+            "data": income_result["data"],
+        }
+        expense_data = {
+            "labels": [f"Week {label}" for label in expense_result["labels"]],
+            "data": expense_result["data"],
+        }
+    elif period == "yearly":
+        income_data = {
+            "labels": [calendar.month_name[label] for label in income["labels"]],
+            "data": income["data"],
+        }
+        expense_data = {
+            "labels": [calendar.month_name[label] for label in expense["labels"]],
+            "data": expense["data"],
+        }
+
+    data = {
+        "income": income_data,
+        "expense": expense_data,
+    }
+    print("-" * 100)
+    # print(data)
+    print("-" * 100)
+
+    return income_data, expense_data
