@@ -32,6 +32,8 @@ DEBUG = True
 ALLOWED_HOSTS = ["https://horizon-production.up.railway.app", "*"]
 CSRF_TRUSTED_ORIGINS = ["https://horizon-production.up.railway.app"]
 
+# Deployment settings on vercel
+# ALLOWED_HOSTS = [".vercel.app", ".now.sh", "127.0.0.1", 'localhost']
 
 # Application definition
 
@@ -93,6 +95,19 @@ DATABASES = {
 }
 
 
+# Posgres Database
+# DATABASES = {
+#     "default": {
+#         "ENGINE": "django.db.backends.postgresql",
+#         "NAME": "postgres",
+#         "USER": "postgres",
+#         "PASSWORD": "password",
+#         "HOST": "railway.app",
+#         "PORT": "5432",
+#     }
+# }
+
+
 # Password validation
 # https://docs.djangoproject.com/en/4.2/ref/settings/#auth-password-validators
 
@@ -129,7 +144,7 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/4.2/howto/static-files/
 
 STATIC_ROOT = os.path.join(BASE_DIR, "static")
-STATIC_URL = "/static/"
+STATIC_URL = "static/"
 STATICFILES_DIRS = [os.path.join(BASE_DIR, "HorizonApp/static")]
 STATICFILES_STORAGE = "whitenoise.storage.CompressedManifestStaticFilesStorage"
 
