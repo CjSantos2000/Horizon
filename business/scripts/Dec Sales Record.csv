@@ -58,4 +58,7 @@ Date,Type,Description,Amount,Image
 15/12/2023,EXPENSE,Stock Expense,1060,
 15/12/2023,EXPENSE,Outsource Expense,1061,
 15/12/2023,INCOME,Sales,2448,
-
+16/12/2023,EXPENSE,Fixed Expenses,950,
+16/12/2023,EXPENSE,Stock Expense,1576,
+16/12/2023,EXPENSE,Outsource Expense,0,
+16/12/2023,INCOME,Sales,3920,

@@ -50,6 +50,7 @@ INSTALLED_APPS = [
     "authentication",
     "business",
     "userpreferences",
+    "inventory",
 ]
 
 MIDDLEWARE = [
@@ -81,7 +82,7 @@ TEMPLATES = [
     },
 ]
 
-WSGI_APPLICATION = "HorizonApp.wsgi.application"
+WSGI_APPLICATION = "HorizonApp.wsgi.app"
 
 
 # Database

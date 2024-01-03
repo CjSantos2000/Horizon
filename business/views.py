@@ -14,6 +14,8 @@ from . import services
 
 # Create your views here.
 
+###### TODO Update Add Transaction with Stocks ######
+
 
 class BusinessView(View):
     def get(self, request, *args, **kwargs):
