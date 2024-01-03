@@ -29,11 +29,11 @@ DEBUG = True
 
 
 # Deployement settings on railway.app
-ALLOWED_HOSTS = ["https://horizon-production.up.railway.app", "*"]
-CSRF_TRUSTED_ORIGINS = ["https://horizon-production.up.railway.app"]
+# ALLOWED_HOSTS = ["https://horizon-production.up.railway.app", "*"]
+# CSRF_TRUSTED_ORIGINS = ["https://horizon-production.up.railway.app"]
 
 # Deployment settings on vercel
-# ALLOWED_HOSTS = [".vercel.app", ".now.sh", "127.0.0.1", 'localhost']
+ALLOWED_HOSTS = [".vercel.app", ".now.sh", "127.0.0.1", "localhost"]
 
 # Application definition
 
