@@ -20,8 +20,8 @@
 
     <div class="col-md-2">
       <a
-        href="#"
-        class="btn btn-success w-100 rounded-pill"
+        href="{% url 'add-product' business.pk %}"
+        class="btn btn-primary w-100 rounded-pill"
         >Add Product</a
       >
 
@@ -35,7 +35,7 @@
           <div class="card-body">
             <h4 class="card-title">Total Products Price</h4>
             <h5 class="card-subtitle mb-2 text-muted">
-              <span>&#8369;</span> {{ business.initial_amount}}
+              <span>&#8369;</span> {{ total_product_price}}
             </h5>
           </div>
         </div>
@@ -45,7 +45,7 @@
           <div class="card-body">
             <h4 class="card-title ">Warning Products</h4>
             <h5 class="card-subtitle mb-2 text-muted">
-              <span>5</span> 
+              <span>{{ warning_products_count }}</span>
             </h5>
             <a>
           </div>
@@ -75,6 +75,7 @@
     <table class="table">
       <thead>
         <tr>
+          <th scope="col">ID</th>
           <th scope="col">Name</th>
           <th scope="col">Description</th>
           <th scope="col">Price</th>
@@ -85,14 +86,20 @@
         </tr>
       </thead>
       <tbody>
-        {% if transaction_logs.count > 0 %}
-        {% for transaction in transaction_logs %}
+        {% if inventory.count > 0 %}
+        {% for product in inventory %}
         <tr>
-          <th scope="row">{{transaction.transaction_id}}</th>
-          <td>{{transaction.description}}</td>
-          <td>{{transaction.type}}</td>
-          <td>{{transaction.amount}}</td>
-          <td>{{transaction.custom_created_at_date}}</td>
+          <th scope="row">{{product.id}}</th>
+          <td>{{product.name}}</td>
+          <td>{{product.description}}</td>
+          <td>{{product.price}}</td>
+          <td>{{product.quantity}}</td>
+          <td>{{product.warning_quantity}}</td>
+          <td>{{product.updated_at}}</td>
+          <td>
+            <a href={% url "update-product" business.id product.id %} class="btn btn-success btn-sm">Update</a>
+            <a href={% url "delete-product" business.id product.id %} class="btn btn-danger btn-sm">Delete</a>
+          </td>
         </tr>
         {% endfor %}
         {% else %}

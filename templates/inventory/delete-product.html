@@ -1,0 +1,48 @@
+{% extends 'base.html' %} {% load static %} {% block content %}
+<div class="container mt-4 ml-0">
+  {% include 'partials/_messages.html' %}
+  <div class="row mt-3">
+    <div class="col-md-10">
+      <nav aria-label="breadcrumb">
+        <ol class="breadcrumb">
+          <li class="breadcrumb-item" aria-current="page">
+            <a href="{% url 'business' %}">Business </a>
+          </li>
+          <li class="breadcrumb-item" aria-current="page">
+            <a href="{% url 'business-detail' business.pk %}"
+              >{{ business.name }}
+            </a>
+          </li>
+          <li class="breadcrumb-item">
+            <a href="{% url 'inventory-detail' business.pk %}">Inventory</a>
+          </li>
+          <li class="breadcrumb-item active">Delete Product</li>
+        </ol>
+      </nav>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-body">
+      <form
+        action="{% url 'delete-product' business.pk product.id %}"
+        method="post"
+      >
+        {% csrf_token %}
+        <div class="alert alert-danger mr-auto">
+          <h5>Are you sure, you want to delete {{ item }}?</h5>
+        </div>
+
+        <a
+          class="btn btn-secondary btn-sm"
+          href="{% url 'inventory-detail' business.pk %}"
+          >Cancel</a
+        >
+        <input class="btn btn-danger btn-sm" type="submit" value="Confirm" />
+      </form>
+    </div>
+  </div>
+</div>
+<script src="{% static 'js/register.js' %}"></script>
+
+{% endblock %}

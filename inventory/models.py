@@ -29,4 +29,7 @@ class ProductHistory(BaseModel):
     date_added = models.DateField()
 
     def __str__(self):
-        return self.product.name + self.created_at.strftime("%d-%m-%Y %H:%M:%S")
+        return self.type + " " + self.created_at.strftime("%d-%m-%Y %H:%M:%S")
+
+    class Meta:
+        verbose_name_plural = "Product History"

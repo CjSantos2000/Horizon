@@ -1,0 +1,94 @@
+{% extends 'base.html' %} {% load static %} {% block content %}
+<div class="container mt-4 ml-0">
+  {% include 'partials/_messages.html' %}
+  <div class="row mt-3">
+    <div class="col-md-10">
+      <nav aria-label="breadcrumb">
+        <ol class="breadcrumb">
+          <li class="breadcrumb-item" aria-current="page">
+            <a href="{% url 'business' %}">Business </a>
+          </li>
+          <li class="breadcrumb-item" aria-current="page">
+            <a href="{% url 'business-detail' business.pk %}"
+              >{{ business.name }}
+            </a>
+          </li>
+          <li class="breadcrumb-item">
+            <a href="{% url 'inventory-detail' business.pk %}">Inventory</a>
+          </li>
+          <li class="breadcrumb-item active">Add Product</li>
+        </ol>
+      </nav>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-body">
+      <form action="{% url 'add-product' business.pk %}" method="post">
+        {% csrf_token %}
+        <div class="form-group">
+          <label for="">Product Name</label>
+          <input
+            type="text"
+            class="form-control form-control-sm"
+            value="{{fieldValues.prod_name}}"
+            name="prod-name"
+            required
+          />
+        </div>
+
+        <div class="form-group">
+          <label for="">Description</label>
+          <input
+            type="textField"
+            class="form-control form-control-sm"
+            value="{{fieldValues.description}}"
+            name="description"
+          />
+        </div>
+
+        <div class="form-group">
+          <label for="">Quantity</label>
+          <input
+            type="number"
+            class="form-control form-control-sm"
+            value="{{fieldValues.quantity}}"
+            name="quantity"
+            required
+          />
+        </div>
+
+        <div class="form-group">
+          <label for="">Price</label>
+          <input
+            type="number"
+            class="form-control form-control-sm"
+            value="{{fieldValues.quantity}}"
+            name="price"
+            required
+          />
+        </div>
+
+        <div class="form-group">
+          <label for="">Warning Quantity</label>
+          <input
+            type="number"
+            class="form-control form-control-sm"
+            value="{{fieldValues.quantity}}"
+            name="warning-quantity"
+            required
+          />
+        </div>
+
+        <input
+          type="submit"
+          value="Add"
+          class="btn btn-primary btn-primary-sm mt-2"
+        />
+      </form>
+    </div>
+  </div>
+</div>
+<script src="{% static 'js/register.js' %}"></script>
+
+{% endblock %}

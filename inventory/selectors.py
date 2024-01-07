@@ -8,7 +8,9 @@ def get_product_by_id(product_id: int):
 
 
 def get_products_by_business_id(business_id: int, limit: int = 10):
-    products = Product.objects.filter(business__id=business_id).order_by("-quantity")
+    products = Product.objects.filter(
+        business__id=business_id, is_deleted=False
+    ).order_by("-quantity")
 
     return products[0:limit]
 

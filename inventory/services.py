@@ -1,3 +1,4 @@
+from django.utils import timezone
 from business.models import Business
 from .models import Product, ProductHistory
 
@@ -8,7 +9,7 @@ def create_product(
     price: float,
     quantity: int,
     warning_quantity: int,
-    business_id: int,
+    business: Business,
 ):
     product = Product.objects.create(
         name=name,
@@ -16,22 +17,21 @@ def create_product(
         price=price,
         quantity=quantity,
         warning_quantity=warning_quantity,
-        business_id=business_id,
+        business=business,
     )
 
     return product
 
 
 def update_product(
-    product_id: int,
+    business: Business,
+    product: Product,
     name: str,
     description: str,
     price: float,
     quantity: int,
     warning_quantity: int,
 ):
-    product = Product.objects.get(id=product_id)
-
     product.name = name
     product.description = description or None
     product.price = price
@@ -40,10 +40,10 @@ def update_product(
 
     product.save()
     create_product_history(
-        business=product.business,
+        business=business,
         type="UPDATE",
-        quantity=quantity,
-        description="Updated product",
+        description="Updated product! \t" + "quantity: " + str(quantity),
+        date_added=timezone.now(),
     )
 
     return product
